@@ -13,6 +13,7 @@ export default defineConfig({
   },
   reporter: [
     ['allure-playwright', {outputDir: 'allure-results'}],
+    ['json', { outputFile: 'test-results.json' }],
     ['html', { outputFolder: 'playwright-report' }],
   ],
   projects: [

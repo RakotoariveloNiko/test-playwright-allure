@@ -3,36 +3,37 @@ name: Playwright Tests
 on:
   push:
     branches:
-      - main
+      - main  # Déclenchement sur les push sur la branche main
   pull_request:
     branches:
-      - main
+      - main  # Déclenchement sur les pull requests vers la branche main
 
 jobs:
-  playwright:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Vérifier le code depuis GitHub
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "16"
+    - name: Installer Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # Utilise la version de Node.js que tu utilises
 
-      - name: Install dependencies
-        run: |
-          npm install
-          npm install -g allure-commandline
+    - name: Installer les dépendances
+      run: npm insta# Déclenchement sur les push sur la branche mainll
 
-      - name: Run Playwright tests
-        run: npx playwright test
+    - name: Exécuter les tests Playwright
+      run: npm run test:playwright
 
-      - name: Generate Allure report
-        run: allure serve allure-results
+    - name: Upload Allure Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: allure-results
+        path: allure-results
 
-      - name: Upload Allure report as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: allure-report
-          path: allure-results
+    - name: Exécuter le serveur Allure pour générer le rapport
+      run: |
+        allure serve allure-results
+      continue-on-error: true  # Cette étape ne bloquera pas le job même si elle échoue
