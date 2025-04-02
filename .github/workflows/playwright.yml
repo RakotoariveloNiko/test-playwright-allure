@@ -3,10 +3,7 @@ name: Playwright Tests
 on:
   push:
     branches:
-      - main  # Déclenchement sur les push sur la branche main
-  pull_request:
-    branches:
-      - main  # Déclenchement sur les pull requests vers la branche main
+      - main 
 
 jobs:
   test:
@@ -19,10 +16,10 @@ jobs:
     - name: Installer Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'  # Utilise la version de Node.js que tu utilises
+        node-version: '22'
 
     - name: Installer les dépendances
-      run: npm insta# Déclenchement sur les push sur la branche mainll
+      run: npm install
 
     - name: Exécuter les tests Playwright
       run: npm run test:playwright
@@ -36,4 +33,4 @@ jobs:
     - name: Exécuter le serveur Allure pour générer le rapport
       run: |
         allure serve allure-results
-      continue-on-error: true  # Cette étape ne bloquera pas le job même si elle échoue
+      continue-on-error: true
