@@ -1,0 +1,66 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vérifier le code depuis GitHub
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Installer Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Démarrer l'application Angular
+        run: npm start &
+
+      - name: Attendre que le serveur Angular soit prêt
+        run: |
+          sleep 10
+          curl --retry 10 --retry-delay 5 --retry-connrefused -I http://localhost:4200 || exit 1
+
+      - name: Exécuter les tests Playwright
+        run: npm run test:e2e
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: allure-results
+
+      - name: Upload des résultats Allure
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Générer le rapport Allure
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results --clean -o allure-report
+
+      - name: Vérifier les fichiers du rapport Allure
+        run: ls -al allure-report
+        
+      - name: Upload du rapport Allure
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Déployer le rapport sur GitHub Pages
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add allure-report
+          git commit -m "Deploy Allure report to master"
+          git push origin master
