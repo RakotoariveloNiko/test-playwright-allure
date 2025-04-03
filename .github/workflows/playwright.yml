@@ -16,7 +16,7 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20" # Utilisation de Node.js LTS stable
+          node-version: "20"
 
       - name: Installer les dépendances
         run: npm ci
@@ -53,3 +53,9 @@ jobs:
         with:
           name: allure-report
           path: allure-report
+
+      - name: Déployer le rapport sur GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
