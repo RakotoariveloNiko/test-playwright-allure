@@ -59,6 +59,8 @@ jobs:
 
       - name: Déployer le rapport sur GitHub Pages
         run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add allure-report
           git commit -m "Deploy Allure report to master"
           git push origin master
