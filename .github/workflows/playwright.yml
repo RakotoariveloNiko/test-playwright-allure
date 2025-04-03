@@ -10,38 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Vérifier le code depuis GitHub
-      uses: actions/checkout@v4
+      - name: Vérifier le code depuis GitHub
+        uses: actions/checkout@v4
 
-    - name: Installer Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Utilisation de Node.js LTS stable
 
-    - name: Installer les dépendances
-      run: npm ci
+      - name: Installer les dépendances
+        run: npm ci
 
-    - name: Installer Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Installer Playwright Browsers
+        run: npx playwright install --with-deps
 
-    - name: Exécuter les tests Playwright
-      run: npm run test:e2e
-      env:
-        PLAYWRIGHT_JSON_OUTPUT_NAME: allure-results
+      - name: Démarrer l'application Angular
+        run: npm start &
 
-    - name: Upload des résultats Allure
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-results
-        path: allure-results
+      - name: Attendre que le serveur Angular soit prêt
+        run: |
+          sleep 10
+          curl --retry 10 --retry-delay 5 --retry-connrefused -I http://localhost:4200 || exit 1
 
-    - name: Générer le rapport Allure
-      run: |
-        npm install -g allure-commandline
-        allure generate allure-results --clean -o allure-report
+      - name: Exécuter les tests Playwright
+        run: npm run test:e2e
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: allure-results
 
-    - name: Upload du rapport Allure
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-report
-        path: allure-report
+      - name: Upload des résultats Allure
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Générer le rapport Allure
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload du rapport Allure
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
