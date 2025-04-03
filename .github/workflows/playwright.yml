@@ -51,7 +51,6 @@ jobs:
       - name: Vérifier les fichiers du rapport Allure
         run: ls -al allure-report
 
-
       - name: Upload du rapport Allure
         uses: actions/upload-artifact@v4
         with:
@@ -59,7 +58,7 @@ jobs:
           path: allure-report
 
       - name: Déployer le rapport sur GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./allure-report
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
