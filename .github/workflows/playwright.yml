@@ -49,7 +49,7 @@ jobs:
           allure generate allure-results --clean -o allure-reports
           
       - name: Vérifier les fichiers du rapport Allure
-        run: ls -al allure-report
+        run: ls -al allure-reports
 
       - name: Upload du rapport Allure
         uses: actions/upload-artifact@v4
